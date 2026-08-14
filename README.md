@@ -33,6 +33,7 @@ III) Código SVM_Classificador.py é necessário instalar a(s) seguinte(s) bibli
 - `pip install numpy`
 - `pip install scikit-learn`
 - `pip install joblib`
+- `pip install matplotlib`
 
 Insira os arquivos X_SRM.npy e y_SRM.npy na mesma pasta do código SVM_Classificador.py. Esses arquivos contêm, respectivamente, as características extraídas pelo SRM e os rótulos das classes Cover e Stego. Após a execução do código, serão gerados os arquivos modelo_svm.pkl, que contém o modelo SVM treinado, e scaler.pkl, responsável pela padronização das características. Ambos serão utilizados no Passo IV para a classificação de novas imagens.
 
