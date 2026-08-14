@@ -8,7 +8,17 @@ I) código LSB_codigo.py é necessário instalar a(s) seguinte(s) biblioteca(s) 
 
 - `pip install Pillow`
 
-está etapa os arquivos stego, já que os arquivos cover são as imagens originais. O código implementado é o algoritmo LSB Replacement (Inserção direta).
+Nesta etapa, são geradas as imagens **Stego** a partir das imagens **Cover**, que correspondem às imagens originais. O código implementa o algoritmo **LSB Replacement (Inserção Direta)**, utilizado para ocultar uma mensagem nos bits menos significativos dos pixels.
+
+Para os testes, pode ser utilizado o conjunto de imagens **BOSSBase**, disponível no Kaggle. Para realizar o download, acesse o [Google Colab](https://colab.research.google.com/#scrollTo=zwFnJsE6vjf8) e execute os seguintes comandos:
+
+```python
+!kaggle datasets download -d lijiyu/bossbase
+!ls
+
+from google.colab import files
+files.download("/content/bossbase.zip")
+
 
 II) Código SRM_main.py é necessário instalar a(s) seguinte(s) biblioteca(s) no terminal: 
 
