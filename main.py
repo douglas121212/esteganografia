@@ -1,351 +1,217 @@
-from PIL import Image
-import os
+import numpy as np
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 
-# ==================================================
-# TEXTO -> BITS
-# ==================================================
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    classification_report
+)
 
-def texto_para_bits(texto):
+import joblib
 
-    texto += "####EOF####"
 
-    return ''.join(
-        format(ord(c), '08b')
-        for c in texto
-    )
 
+# ==========================================
+# CARREGAR SRM
+# ==========================================
 
+X = np.load(
+    "X_SRM.npy"
+)
 
-# ==================================================
-# BITS -> TEXTO
-# ==================================================
+y = np.load(
+    "y_SRM.npy"
+)
 
-def bits_para_texto(bits):
 
-    texto = ""
+print("Características:", X.shape)
+print("Classes:", y.shape)
 
-    for i in range(0, len(bits), 8):
 
-        byte = bits[i:i+8]
 
-        if len(byte) < 8:
-            break
+# ==========================================
+# SEPARAR TREINO E TESTE
+# ==========================================
 
+X_train, X_test, y_train, y_test = train_test_split(
 
-        caractere = chr(
-            int(byte, 2)
-        )
+    X,
+    y,
 
+    test_size=0.2,
 
-        texto += caractere
+    random_state=42,
 
+    stratify=y
 
-        if texto.endswith("####EOF####"):
+)
 
-            return texto[:-10]
 
 
-    return texto
+# ==========================================
+# NORMALIZAÇÃO
+# ==========================================
 
+scaler = StandardScaler()
 
 
-# ==================================================
-# INSERÇÃO LSB EM UMA IMAGEM GRAYSCALE
-# ==================================================
+X_train = scaler.fit_transform(
+    X_train
+)
 
-def inserir_lsb_gray(
-        imagem_entrada,
-        imagem_saida,
-        bits):
 
+X_test = scaler.transform(
+    X_test
+)
 
-    img = Image.open(
-        imagem_entrada
-    ).convert("L")
 
 
-    pixels = list(
-        img.getdata()
-    )
+# ==========================================
+# TREINAR SVM
+# ==========================================
 
+modelo = SVC(
 
-    capacidade = len(pixels)
+    kernel="rbf",
 
+    C=10,
 
-    if len(bits) > capacidade:
+    gamma="scale",
 
-        raise Exception(
-            "Mensagem maior que capacidade da imagem."
-        )
+    probability=True
 
+)
 
-    novos_pixels = []
 
+modelo.fit(
 
-    indice = 0
+    X_train,
 
+    y_train
 
-    for pixel in pixels:
+)
 
 
-        if indice < len(bits):
 
-            bit = int(
-                bits[indice]
-            )
+# ==========================================
+# TESTE
+# ==========================================
 
+y_pred = modelo.predict(
+    X_test
+)
 
-            # altera somente o LSB
-            pixel = (
-                pixel & 254
-            ) | bit
 
 
-            indice += 1
+# ==========================================
+# MÉTRICAS
+# ==========================================
 
+acc = accuracy_score(
 
-        novos_pixels.append(pixel)
+    y_test,
 
+    y_pred
 
+)
 
-    img_saida = Image.new(
-        "L",
-        img.size
-    )
 
+relatorio = classification_report(
 
-    img_saida.putdata(
-        novos_pixels
-    )
+    y_test,
 
+    y_pred,
 
-    img_saida.save(
-        imagem_saida
-    )
+    target_names=[
+        "Cover",
+        "Stego"
+    ],
 
+    output_dict=True
 
+)
 
-# ==================================================
-# PROCESSAMENTO EM LOTE - COVER -> STEGO
-# ==================================================
 
-def gerar_dataset_stego():
 
+matriz = confusion_matrix(
 
-    pasta_cover = input(
-        "Pasta das imagens cover: "
-    )
+    y_test,
 
+    y_pred
 
-    arquivo_txt = input(
-        "Arquivo TXT da mensagem: "
-    )
+)
 
 
-    pasta_saida = input(
-        "Pasta para salvar stego: "
-    )
 
+print("\n================================")
+print("        RESULTADOS SVM")
+print("================================")
 
-    if not os.path.exists(pasta_saida):
 
-        os.makedirs(
-            pasta_saida
-        )
+print(
+    f"Acurácia: {acc*100:.2f}%"
+)
 
 
+print(
+    f"Precisão Cover: {relatorio['Cover']['precision']*100:.2f}%"
+)
 
-    # lê mensagem
 
-    with open(
-        arquivo_txt,
-        "r",
-        encoding="utf-8"
-    ) as f:
+print(
+    f"Recall Cover: {relatorio['Cover']['recall']*100:.2f}%"
+)
 
-        mensagem = f.read()
 
+print(
+    f"Precisão Stego: {relatorio['Stego']['precision']*100:.2f}%"
+)
 
 
-    bits = texto_para_bits(
-        mensagem
-    )
+print(
+    f"Recall Stego: {relatorio['Stego']['recall']*100:.2f}%"
+)
 
 
+print(
+    f"F1-score: {relatorio['weighted avg']['f1-score']*100:.2f}%"
+)
 
-    contador = 0
 
+print("\nMatriz de confusão:")
 
+print(matriz)
 
-    for arquivo in os.listdir(
-        pasta_cover
-    ):
 
 
-        if arquivo.lower().endswith(
-            (".png", ".bmp")
-        ):
+# ==========================================
+# SALVAR MODELO
+# ==========================================
 
+joblib.dump(
 
-            entrada = os.path.join(
-                pasta_cover,
-                arquivo
-            )
+    modelo,
 
+    "modelo_svm.pkl"
 
-            saida = os.path.join(
-                pasta_saida,
-                arquivo
-            )
+)
 
 
-            inserir_lsb_gray(
-                entrada,
-                saida,
-                bits
-            )
+joblib.dump(
 
+    scaler,
 
-            contador += 1
+    "scaler.pkl"
 
+)
 
-            print(
-                "Gerado:",
-                arquivo
-            )
 
 
-
-    print("\nFinalizado")
-    print(
-        "Total de imagens stego:",
-        contador
-    )
-
-
-
-# ==================================================
-# EXTRAÇÃO DE UMA IMAGEM STEGO
-# ==================================================
-
-def extrair_lsb_gray(
-        imagem_stego):
-
-
-    img = Image.open(
-        imagem_stego
-    ).convert("L")
-
-
-
-    pixels = list(
-        img.getdata()
-    )
-
-
-    bits = ""
-
-
-
-    for pixel in pixels:
-
-
-        # lê somente o LSB
-        bits += str(
-            pixel & 1
-        )
-
-
-
-    mensagem = bits_para_texto(
-        bits
-    )
-
-
-    return mensagem
-
-
-
-# ==================================================
-# EXTRAÇÃO EM LOTE
-# ==================================================
-
-def extrair_dataset():
-
-
-    pasta_stego = input(
-        "Pasta das imagens stego: "
-    )
-
-
-    for arquivo in os.listdir(
-        pasta_stego
-    ):
-
-
-        if arquivo.lower().endswith(
-            (".png", ".bmp")
-        ):
-
-
-            caminho = os.path.join(
-                pasta_stego,
-                arquivo
-            )
-
-
-            mensagem = extrair_lsb_gray(
-                caminho
-            )
-
-
-            print("\nImagem:")
-            print(arquivo)
-
-            print("Mensagem:")
-            print(mensagem)
-
-
-
-# ==================================================
-# MENU
-# ==================================================
-
-while True:
-
-
-    print("\n======================")
-    print(" ESTEGANOGRAFIA LSB")
-    print("======================")
-
-    print("1 - Gerar imagens stego")
-    print("2 - Extrair mensagem")
-    print("3 - Sair")
-
-
-    opcao = input(
-        "Escolha: "
-    )
-
-
-    if opcao == "1":
-
-        gerar_dataset_stego()
-
-
-    elif opcao == "2":
-
-        extrair_dataset()
-
-
-    elif opcao == "3":
-
-        break
-
-
-    else:
-
-        print(
-            "Opção inválida"
-        )
+print("\n================================")
+print("Arquivos salvos com sucesso:")
+print("✓ modelo_svm.pkl")
+print("✓ scaler.pkl")
+print("================================")
