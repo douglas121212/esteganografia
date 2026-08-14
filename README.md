@@ -1,2 +1,2 @@
 # esteganografia
-projeto de esteganografia no domínio da frequência
+Projeto classificador de esteganografia.
