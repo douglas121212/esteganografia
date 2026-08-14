@@ -12,12 +12,13 @@ Nesta etapa, são geradas as imagens **Stego** a partir das imagens **Cover**, q
 
 Para os testes, pode ser utilizado o conjunto de imagens **BOSSBase**, disponível no Kaggle. Para realizar o download, acesse o [Google Colab](https://colab.research.google.com/#scrollTo=zwFnJsE6vjf8) e execute os seguintes comandos:
 
-- `python
+```python
 !kaggle datasets download -d lijiyu/bossbase
 !ls
 
 from google.colab import files
-files.download("/content/bossbase.zip")`
+files.download("/content/bossbase.zip")
+```
 
 
 II) Código SRM_main.py é necessário instalar a(s) seguinte(s) biblioteca(s) no terminal: 
