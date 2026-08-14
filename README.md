@@ -46,4 +46,12 @@ IV) Código Teste_cover_ou_stego.py é necessário instalar a(s) seguinte(s) bib
 Insira os arquivos modelo_svm.pkl e scaler.pkl na mesma pasta do código Teste_cover_ou_stego.py. Esses arquivos serão utilizados para realizar a classificação de novas imagens, identificando-as como Cover ou Stego.
 
 
-Conclusão - Ao final, o projeto conseguiu alcançar aproximadamente 97% de acurácia, ou seja, o modelo classificou corretamente cerca de 97% das imagens analisadas entre as classes Cover e Stego.
+### Conclusão
+
+Ao final, o projeto alcançou aproximadamente **97% de acurácia**, indicando que o modelo classificou corretamente cerca de 97% das imagens analisadas entre as classes **Cover** e **Stego**. Além disso, a avaliação por meio da **Curva ROC (Receiver Operating Characteristic)** apresentou uma **AUC (Area Under the Curve) de aproximadamente 99,85%**, demonstrando uma elevada capacidade do classificador SVM em distinguir as duas classes.
+
+#### Curva ROC
+
+![Curva ROC do classificador SVM](curva_roc.png)
+
+**Figura:** Curva ROC do classificador SVM.
