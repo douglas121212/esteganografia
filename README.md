@@ -6,8 +6,7 @@ A seguir, é demonstrado o passo a passo para a utilização do projeto no PyCha
 
 I) código LSB_codigo.py é necessário instalar as seguintes bibliotecas no terminal: 
 
-   ```bash
-  pip install Pillow
+- `pip install Pillow`
 
 II) Código SRM_main.py é necessário instalar as seguintes bibliotecas no terminal: 
 
