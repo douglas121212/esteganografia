@@ -57,3 +57,16 @@ Ao final, o projeto alcançou aproximadamente **97% de acurácia**, indicando qu
 ![Curva ROC do classificador SVM](curva_roc.png)
 
 **Figura:** Curva ROC do classificador SVM.
+
+
+
+#### Métricas
+
+![Curva ROC do classificador SVM](metricas.png)
+
+**Figura:** Outras Métricas.
+
+
+
+
+
