@@ -4,7 +4,7 @@ O projeto implementa um sistema de esteganálise baseado em LSB Replacement, SRM
 
 A seguir, é demonstrado o passo a passo para a utilização do projeto no PyCharm, utilizando a linguagem Python. Recomenda-se criar uma pasta para cada etapa do projeto, a fim de facilitar a organização e o entendimento da implementação.
 
-# Observação: o treinamento é realizado com cerca de 20% da capacidade disponível, utilizando imagens de 256 × 256 pixels. Considerando a utilização de 1 bit por pixel para a ocultação, cada imagem possui capacidade máxima de aproximadamente 8 KB, permitindo utilizar um arquivo de texto com aproximadamente 1,6 KB quando empregada uma carga de 20%.
+Observação: o treinamento é realizado com cerca de 20% da capacidade disponível, utilizando imagens de 256 × 256 pixels. Considerando a utilização de 1 bit por pixel para a ocultação, cada imagem possui capacidade máxima de aproximadamente 8 KB, permitindo utilizar um arquivo de texto com aproximadamente 1,6 KB quando empregada uma carga de 20%.
 
 I) código LSB_codigo.py é necessário instalar a(s) seguinte(s) biblioteca(s) no terminal: 
 
