@@ -1,16 +1,20 @@
 # Esteganálise - Projeto classificador de esteganografia
 
-O projeto implementa um sistema de esteganálise baseado em LSB Replacement, SRM e SVM. Inicialmente, o algoritmo LSB é utilizado para gerar imagens estego, inserindo uma mensagem secreta nos bits menos significativos dos pixels de imagens originais (Cover). Em seguida, as imagens Cover e Stego são processadas pelo Spatial Rich Model (SRM), responsável por extrair características estatísticas relacionadas aos resíduos e às variações locais dos pixels. Essas características são organizadas em vetores e utilizadas como entrada para o treinamento de um Support Vector Machine (SVM), que aprende a distinguir imagens originais de imagens que possuem dados ocultos. Por fim, uma nova imagem pode ser submetida ao mesmo processo de extração de características e classificada pelo modelo como Cover ou Stego. 
+O projeto implementa um sistema de esteganálise baseado em SRM e SVM. Inicialmente, o algoritmo LSB é utilizado para gerar imagens estego, inserindo uma mensagem secreta nos bits menos significativos dos pixels de imagens originais (Cover). Em seguida, as imagens Cover e Stego são processadas pelo Spatial Rich Model (SRM), responsável por extrair características estatísticas relacionadas aos resíduos e às variações locais dos pixels. Essas características são organizadas em vetores e utilizadas como entrada para o treinamento de um Support Vector Machine (SVM), que aprende a distinguir imagens originais de imagens que possuem dados ocultos. Por fim, uma nova imagem pode ser submetida ao mesmo processo de extração de características e classificada pelo modelo como Cover ou Stego. 
+
+
+Nesta etapa, são utilizados 30 filtros, compostos por filtros de 1ª, 2ª e 3ª ordem, filtros de borda 3×3 e 5×5 e filtros square 3×3 e 5×5. Esses filtros são aplicados às imagens para gerar diferentes resíduos. Em seguida, os resíduos passam por truncamento e quantização, limitando seus valores entre −2 e +2. Posteriormente, é calculada a coocorrência de 4ª ordem nas direções horizontal, vertical e diagonais. Como resultado, cada filtro gera 625 características, totalizando 18.750 características por imagem (30 × 625). Essas características formam o vetor de entrada utilizado pelo classificador.
+
 
 A seguir, é demonstrado o passo a passo para a utilização do projeto no PyCharm, utilizando a linguagem Python. Recomenda-se criar uma pasta para cada etapa do projeto, a fim de facilitar a organização e o entendimento da implementação.
 
-Observação: o treinamento é realizado com cerca de 20% da capacidade disponível, utilizando imagens de 256 × 256 pixels. Considerando a utilização de 1 bit por pixel para a ocultação, cada imagem possui capacidade máxima de aproximadamente 8 KB, permitindo utilizar um arquivo de texto com aproximadamente 1,6 KB quando empregada uma carga de 20%.
+Observação: o treinamento é realizado utilizando um payload de 300 bytes em imagens de 256 × 256 pixels. Considerando a utilização de 1 bit por pixel para a ocultação da mensagem, cada imagem possui uma capacidade máxima de 65.536 bits, equivalente a 8.192 bytes (8 KB). Assim, o payload de 300 bytes corresponde a aproximadamente 3,66% da capacidade máxima de cada imagem.
 
-I) código LSB_codigo.py é necessário instalar a(s) seguinte(s) biblioteca(s) no terminal: 
+I) código LSB_Random.py é necessário instalar a(s) seguinte(s) biblioteca(s) no terminal: 
 
 - `pip install Pillow`
 
-Nesta etapa, são geradas as imagens **Stego** a partir das imagens **Cover**, que correspondem às imagens originais. O código implementa o algoritmo **LSB Replacement (Inserção Direta)**, utilizado para ocultar uma mensagem nos bits menos significativos dos pixels.
+Nesta etapa, são geradas as imagens **Stego** a partir das imagens **Cover**, que correspondem às imagens originais. O código implementa o algoritmo **LSB Random**, utilizado para ocultar uma mensagem nos bits menos significativos dos pixels.
 
 Para os testes, pode ser utilizado o conjunto de imagens **BOSSBase**, disponível no Kaggle. Para realizar o download, acesse o [Google Colab](https://colab.research.google.com/#scrollTo=zwFnJsE6vjf8) e execute os seguintes comandos:
 
@@ -30,6 +34,8 @@ II) Código SRM_main.py é necessário instalar a(s) seguinte(s) biblioteca(s) n
 
 Esta etapa gera dois arquivos, X_SRM.npy e y_SRM.npy, que deverão ser colocados na pasta referente ao Passo III. O arquivo X_SRM.npy contém as características extraídas das imagens, enquanto o arquivo y_SRM.npy contém os respectivos rótulos das classes Cover e Stego.
 
+Tempo estimado é de cerca de 5 min.
+
 III) Código SVM_Classificador.py é necessário instalar a(s) seguinte(s) biblioteca(s) no terminal: 
 
 - `pip install numpy`
@@ -38,6 +44,8 @@ III) Código SVM_Classificador.py é necessário instalar a(s) seguinte(s) bibli
 - `pip install matplotlib`
 
 Insira os arquivos X_SRM.npy e y_SRM.npy na mesma pasta do código SVM_Classificador.py. Esses arquivos contêm, respectivamente, as características extraídas pelo SRM e os rótulos das classes Cover e Stego. Após a execução do código, serão gerados os arquivos modelo_svm.pkl, que contém o modelo SVM treinado, e scaler.pkl, responsável pela padronização das características. Ambos serão utilizados no Passo IV para a classificação de novas imagens.
+
+Tempo estimado é de cerca de 5 à 10 min..
 
 IV) Código Teste_cover_ou_stego.py é necessário instalar a(s) seguinte(s) biblioteca(s) no terminal: 
 
